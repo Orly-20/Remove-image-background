@@ -1,5 +1,9 @@
 import os
+
+# CRÍTICO: Estas variables DEBEN estar ANTES de cualquier import de rembg
 os.environ['ORT_DISABLE_FLASH_ATTENTION'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 from flask import Flask, render_template, request, send_file
 from rembg import remove
 from PIL import Image
@@ -152,7 +156,6 @@ def index():
             const loading = document.getElementById('loading');
             const form = document.getElementById('uploadForm');
 
-            // Prevenir comportamiento por defecto del drag & drop
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 uploadArea.addEventListener(eventName, preventDefaults, false);
             });
@@ -162,7 +165,6 @@ def index():
                 e.stopPropagation();
             }
 
-            // Highlight al arrastrar
             ['dragenter', 'dragover'].forEach(eventName => {
                 uploadArea.addEventListener(eventName, () => {
                     uploadArea.classList.add('dragover');
@@ -175,7 +177,6 @@ def index():
                 });
             });
 
-            // Manejar drop
             uploadArea.addEventListener('drop', function(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
@@ -183,7 +184,6 @@ def index():
                 handleFiles(files);
             });
 
-            // Manejar selección de archivo
             fileInput.addEventListener('change', function() {
                 handleFiles(this.files);
             });
@@ -204,7 +204,6 @@ def index():
                 }
             }
 
-            // Enviar formulario
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
@@ -263,11 +262,14 @@ def upload():
         return str(e), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    # Obtener puerto de las variables de entorno (Render lo asigna automáticamente)
+    port = int(os.environ.get('PORT', 10000))
+    
     print("\n" + "="*50)
-    print("🚀 Servidor iniciado!")
+    print("🚀 Servidor iniciado correctamente!")
     print(f"📱 Puerto: {port}")
+    print(f"🔧 GPU deshabilitada: ORT_DISABLE_FLASH_ATTENTION={os.environ.get('ORT_DISABLE_FLASH_ATTENTION', 'NO SET')}")
     print("="*50 + "\n")
 
+    # IMPORTANTE: host='0.0.0.0' permite conexiones externas, debug=False para producción
     app.run(host='0.0.0.0', port=port, debug=False)
-
