@@ -1,3 +1,5 @@
+import os
+os.environ['ORT_DISABLE_FLASH_ATTENTION'] = '1'
 from flask import Flask, render_template, request, send_file
 from rembg import remove
 from PIL import Image
@@ -261,9 +263,10 @@ def upload():
         return str(e), 500
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     print("\n" + "="*50)
     print("🚀 Servidor iniciado!")
-    print("📱 Abre este enlace en cualquier navegador:")
-    print("   http://localhost:5000")
+    print(f"📱 Puerto: {port}")
     print("="*50 + "\n")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+
+    app.run(host='0.0.0.0', port=port, debug=False)
